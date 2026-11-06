@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Spider HQ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ---------- Tokens ---------- */
+:root{
+  color-scheme:dark;
+  --bg:#0b0c0f; --card:#13151a; --card2:#181b21; --line:#23262e;
+  --text:#e8eaee; --dim:#8a909c; --faint:#575c67;
+  --red:#b0202f; --red-soft:rgba(176,32,47,.16); --steel:#7f9cbd;
+  --sans:'Manrope',system-ui,sans-serif; --mono:'DM Mono',ui-monospace,monospace;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px);height:100%}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);line-height:1.55;-webkit-font-smoothing:antialiased;
+  background-image:radial-gradient(900px 500px at 85% -5%,rgba(176,32,47,.10),transparent 60%),radial-gradient(700px 500px at 0% 40%,rgba(127,156,189,.06),transparent 60%);
+  background-attachment:fixed}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--steel);outline-offset:3px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px 80px}
+.mono{font-family:var(--mono)}
+
+/* ---------- Hero ---------- */
+.hero{position:relative;overflow:hidden;margin:20px 0 28px;padding:clamp(28px,6vw,64px);border:1px solid var(--line);border-radius:20px;
+  background:linear-gradient(135deg,#14161b 0%,#0d0e12 70%);min-height:340px;display:flex;flex-direction:column;justify-content:flex-end;
+  box-shadow:0 30px 80px -30px rgba(0,0,0,.8)}
+.hero svg.art{position:absolute;right:0;top:0;height:100%;width:min(62%,640px);pointer-events:none}
+.status{display:inline-flex;align-items:center;gap:10px;align-self:flex-start;padding:6px 14px;border:1px solid rgba(176,32,47,.45);border-radius:99px;
+  background:var(--red-soft);font:500 11px/1 var(--mono);letter-spacing:.18em;color:#e4a1a8;margin-bottom:22px;position:relative}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--red);box-shadow:0 0 0 0 rgba(176,32,47,.6);animation:pulse 2.4s infinite}
+@keyframes pulse{70%{box-shadow:0 0 0 9px rgba(176,32,47,0)}100%{box-shadow:0 0 0 0 rgba(176,32,47,0)}}
+h1{margin:0;font-weight:800;font-size:clamp(46px,10vw,112px);line-height:.92;letter-spacing:-.045em;position:relative}
+h1 span{display:block;font-weight:300;color:var(--dim);letter-spacing:-.03em}
+.hero-meta{position:relative;margin-top:26px;display:flex;flex-wrap:wrap;gap:8px 28px;align-items:baseline}
+.hero-date{font:500 14px var(--mono);color:var(--steel)}
+.hero-quote{color:var(--dim);font-size:16px;max-width:46ch;margin:14px 0 0;position:relative}
+
+/* ---------- Layout ---------- */
+.grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:24px;align-items:start}
+.card{background:linear-gradient(180deg,var(--card2),var(--card));border:1px solid var(--line);border-radius:16px;padding:24px;
+  box-shadow:0 18px 40px -24px rgba(0,0,0,.9),inset 0 1px 0 rgba(255,255,255,.03)}
+.side{display:grid;gap:24px;position:sticky;top:20px}
+h2{margin:0 0 4px;font-size:20px;font-weight:700;letter-spacing:-.02em}
+.sub{color:var(--dim);font-size:13px;margin:0 0 18px}
+
+/* ---------- Date nav ---------- */
+.nav{display:flex;align-items:center;gap:8px;margin-bottom:18px;flex-wrap:wrap}
+.nav .title{flex:1;min-width:180px}
+.nav .title b{display:block;font-size:22px;letter-spacing:-.02em;font-weight:700}
+.nav .title small{font:400 12px var(--mono);color:var(--steel)}
+.btn{border:1px solid var(--line);background:var(--card2);border-radius:10px;padding:9px 14px;font-size:13px;font-weight:500;transition:.2s}
+.btn:hover{border-color:#3a3f4a;background:#1d2027;transform:translateY(-1px)}
+.btn.red:hover{border-color:var(--red);background:var(--red-soft)}
+.btn.sq{width:40px;padding:9px 0;text-align:center}
+input[type=date]{border:1px solid var(--line);background:var(--card2);color:var(--text);border-radius:10px;padding:8px 10px;font:400 13px var(--mono);color-scheme:dark}
+
+/* ---------- Week strip ---------- */
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:22px}
+.wd{border:1px solid var(--line);border-radius:12px;background:transparent;padding:9px 0 8px;text-align:center;transition:.2s;position:relative}
+.wd:hover{border-color:#3a3f4a;background:var(--card2)}
+.wd small{display:block;font:400 10px var(--mono);color:var(--faint);letter-spacing:.1em}
+.wd b{display:block;font-size:16px;font-weight:600;margin:1px 0 6px}
+.wd i{display:block;height:3px;margin:0 10px;border-radius:3px;background:var(--line);overflow:hidden}
+.wd i em{display:block;height:100%;background:var(--steel);width:0}
+.wd.sel{border-color:rgba(176,32,47,.6);background:var(--red-soft)}
+.wd.today small{color:var(--red)}
+
+/* ---------- Progress ---------- */
+.pct{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:12px}
+.pct b{font-size:56px;font-weight:300;letter-spacing:-.05em;line-height:1}
+.pct b sup{font-size:20px;color:var(--dim);margin-left:2px}
+.pct span{font:400 12px var(--mono);color:var(--dim);text-align:right}
+.bar{height:6px;background:#1c1f26;border-radius:6px;overflow:hidden}
+.bar div{height:100%;width:0;border-radius:6px;background:linear-gradient(90deg,#7a1722,var(--red) 70%,#d4414f);transition:width .8s cubic-bezier(.2,.8,.2,1)}
+.bar.done div{background:linear-gradient(90deg,#4d6a8a,var(--steel))}
+
+/* ---------- Timeline ---------- */
+.tl{list-style:none;margin:0;padding:0;position:relative}
+.tl::before{content:"";position:absolute;left:79px;top:10px;bottom:10px;width:1px;background:linear-gradient(var(--line),var(--line))}
+.it{display:grid;grid-template-columns:64px 31px 1fr;align-items:start;padding:5px 0}
+.time{font:400 12px/1.4 var(--mono);color:var(--dim);padding-top:15px;text-align:right}
+.time small{display:block;color:var(--faint);font-size:11px}
+.node{position:relative;height:100%;display:flex;justify-content:center;padding-top:19px}
+.node::after{content:"";width:9px;height:9px;border-radius:50%;background:var(--bg);border:1.5px solid var(--faint);transition:.3s;z-index:1}
+.it.active .node::after{border-color:var(--red);background:var(--red);box-shadow:0 0 0 5px var(--red-soft)}
+.it.done .node::after{border-color:var(--steel);background:var(--steel)}
+.task{display:flex;gap:14px;align-items:center;width:100%;text-align:left;border:1px solid var(--line);background:rgba(255,255,255,.012);border-radius:12px;padding:13px 15px;transition:.25s}
+.task:hover{border-color:#3a3f4a;background:rgba(255,255,255,.035);transform:translateX(3px)}
+.it.active .task{border-color:rgba(176,32,47,.55);background:linear-gradient(90deg,var(--red-soft),transparent)}
+.chk{flex:none;width:20px;height:20px;border-radius:6px;border:1.5px solid #3d424d;display:grid;place-items:center;transition:.25s}
+.chk svg{width:12px;height:12px;stroke:#0b0c0f;stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:20;stroke-dashoffset:20;transition:.3s .05s}
+.it.done .chk{background:var(--steel);border-color:var(--steel)}
+.it.done .chk svg{stroke-dashoffset:0}
+.task .t{display:block;font-weight:600;font-size:15px;transition:.25s}
+.task .d{display:block;font-size:12px;color:var(--dim)}
+.it.done .t{color:var(--dim);text-decoration:line-through;text-decoration-color:var(--faint)}
+.now{margin-left:auto;font:500 10px var(--mono);letter-spacing:.14em;color:#e4a1a8;border:1px solid rgba(176,32,47,.5);border-radius:99px;padding:3px 9px;flex:none}
+
+/* ---------- Journal ---------- */
+textarea{width:100%;min-height:210px;resize:vertical;border:1px solid var(--line);background:#0e1014;color:var(--text);border-radius:12px;padding:14px;font:400 14px/1.7 var(--sans);transition:.2s}
+textarea:focus{outline:none;border-color:rgba(127,156,189,.6);box-shadow:0 0 0 3px rgba(127,156,189,.12)}
+.jfoot{display:flex;justify-content:space-between;align-items:center;margin-top:10px;font:400 12px var(--mono);color:var(--faint)}
+.saved{color:var(--steel);opacity:0;transition:.4s}.saved.on{opacity:1}
+.reset{display:flex;justify-content:space-between;align-items:center;gap:14px}
+.reset p{margin:0;font-size:13px;color:var(--dim)}
+
+/* ---------- Modal + toast ---------- */
+.modal{position:fixed;inset:0;display:none;place-items:center;background:rgba(5,6,8,.72);backdrop-filter:blur(6px);z-index:50;padding:20px}
+.modal.on{display:grid;animation:fade .25s}
+.modal .box{max-width:400px;width:100%;background:var(--card2);border:1px solid var(--line);border-radius:16px;padding:26px;box-shadow:0 40px 80px rgba(0,0,0,.6)}
+.modal h3{margin:0 0 8px;font-size:18px}.modal p{margin:0 0 22px;color:var(--dim);font-size:14px}
+.modal .row{display:flex;gap:10px;justify-content:flex-end}
+.btn.danger{background:var(--red);border-color:var(--red)}.btn.danger:hover{background:#c52a3b}
+@keyframes fade{from{opacity:0}}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);opacity:0;background:var(--card2);border:1px solid var(--line);
+  padding:10px 18px;border-radius:99px;font:400 12px var(--mono);color:var(--text);transition:.35s;pointer-events:none;z-index:60}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+footer{text-align:center;color:var(--faint);font:400 11px var(--mono);letter-spacing:.1em;margin-top:40px}
+
+/* ---------- Responsive ---------- */
+@media(max-width:900px){.grid{grid-template-columns:1fr}.side{position:static}.hero svg.art{opacity:.55;width:90%}}
+@media(max-width:520px){
+  .wrap{padding:0 14px 60px}.card{padding:18px}
+  .tl::before{left:5px}
+  .it{grid-template-columns:11px 1fr;grid-template-areas:"n t" ". c";column-gap:12px}
+  .time{grid-area:t;text-align:left;padding:10px 0 4px;display:flex;gap:8px}.time small{display:inline}
+  .node{grid-area:n;padding-top:14px}.task{grid-area:c}
+  .pct b{font-size:46px}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+<style>
+/* ===== Cinematic layer: 3D canvas, grain, loader, cursor, hero overrides ===== */
+#gl{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.wrap{position:relative;z-index:1}
+#grain{position:fixed;inset:-10%;z-index:90;pointer-events:none;opacity:.07;animation:gr .9s steps(4) infinite;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>")}
+@keyframes gr{25%{transform:translate(-3%,2%)}50%{transform:translate(2%,-3%)}75%{transform:translate(-2%,-1%)}}
+#vig{position:fixed;inset:0;z-index:89;pointer-events:none;box-shadow:inset 0 0 220px 30px rgba(0,0,0,.65)}
+
+/* Hero becomes a full-screen window onto the 3D scene */
+.hero{background:none;border:0;box-shadow:none;border-radius:0;overflow:visible;margin:0 0 40px;min-height:100svh;padding-left:0;padding-right:0}
+.hero svg.art{display:none}
+h1{perspective:800px}
+h1 .ch{display:inline-block;font-weight:inherit;color:inherit}
+.cue{position:relative;margin-top:36px;font:400 11px var(--mono);letter-spacing:.2em;color:var(--faint);display:flex;align-items:center;gap:14px}
+.cue i{width:48px;height:1px;background:var(--faint);transform-origin:left;animation:cue 2.4s ease-in-out infinite}
+@keyframes cue{50%{transform:scaleX(.3)}}
+.big{font-size:clamp(44px,9vw,108px);font-weight:800;letter-spacing:-.05em;line-height:.93;margin:20px 0 32px}
+.big span{font-weight:300;color:var(--dim)}
+
+/* Glass used sparingly: sidebar only */
+.side .card{background:linear-gradient(180deg,rgba(28,31,38,.62),rgba(19,21,26,.55));backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.chk{position:relative}
+.burst{position:absolute;inset:-2px;border-radius:8px;border:1.5px solid var(--red);pointer-events:none}
+
+/* Loader */
+#loader{position:fixed;inset:0;z-index:200;background:#07080a;display:grid;place-items:center;text-align:center}
+#loader .n{font:300 clamp(56px,12vw,120px)/1 var(--mono);letter-spacing:-.05em}
+#loader .l{width:min(260px,60vw);height:1px;background:var(--line);margin:22px auto 16px;overflow:hidden}
+#loader .l i{display:block;height:100%;background:var(--red);transform:scaleX(0);transform-origin:left}
+#loader p{margin:0;font:400 11px var(--mono);letter-spacing:.24em;color:var(--dim)}
+
+/* Custom cursor (fine pointers only) */
+#cd,#cr{position:fixed;left:0;top:0;pointer-events:none;z-index:120;opacity:0}
+#cd{width:6px;height:6px;margin:-3px;border-radius:50%;background:var(--text)}
+#cr{width:36px;height:36px;margin:-18px;border-radius:50%;border:1px solid rgba(232,234,238,.35);transition:width .25s,height .25s,margin .25s,border-color .25s,background .25s}
+#cr.hov{width:60px;height:60px;margin:-30px;border-color:var(--red);background:rgba(176,32,47,.1)}
+body.cursor #cd,body.cursor #cr{opacity:1}
+body.cursor,body.cursor *{cursor:none!important}
+body.cursor textarea,body.cursor input{cursor:auto!important}
+@media(max-width:900px){.hero{min-height:92svh}}
+</style>
+</head>
+<body>
+<canvas id="gl" aria-hidden="true"></canvas>
+<div id="vig"></div><div id="grain"></div><div id="cd"></div><div id="cr"></div>
+<div id="loader" aria-hidden="true"><div><div class="n">00</div><div class="l"><i></i></div><p>ESTABLISHING SECURE LINK</p></div></div>
+<div class="wrap">
+
+  <!-- ===== Hero ===== -->
+  <header class="hero">
+    <!-- Original web-slinging artwork: web fan + swinging silhouette -->
+    <svg class="art" viewBox="0 0 600 340" preserveAspectRatio="xMaxYMin slice" aria-hidden="true">
+      <defs>
+        <linearGradient id="fade" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7f9cbd" stop-opacity=".5"/><stop offset="1" stop-color="#7f9cbd" stop-opacity="0"/></linearGradient>
+      </defs>
+      <g stroke="url(#fade)" stroke-width=".8" fill="none" id="web"></g>
+      <!-- swing line + figure -->
+      <path d="M600 0 Q470 40 408 118" stroke="#b0202f" stroke-opacity=".7" stroke-width="1.2" fill="none"/>
+      <g transform="translate(330 120) rotate(-18)" fill="#07080a" stroke="#b0202f" stroke-opacity=".55" stroke-width="1">
+        <circle cx="70" cy="2" r="9"/>
+        <path d="M60 10 Q48 30 38 52 L52 58 Q64 38 78 16Z"/>
+        <path d="M70 8 L84 -2 L100 -16" fill="none" stroke-width="3" stroke="#07080a"/>
+        <path d="M38 52 L16 78 L2 74 M52 58 L66 84 L82 82" fill="none" stroke-width="4" stroke="#07080a"/>
+        <path d="M60 10 L40 14 L22 8" fill="none" stroke-width="3" stroke="#07080a"/>
+      </g>
+    </svg>
+    <div class="status"><span class="dot"></span>YOUR CITY NEEDS YOU</div>
+    <h1>SPIDER<span>HQ</span></h1>
+    <div class="hero-meta"><div class="hero-date" id="heroDate"></div></div>
+    <p class="hero-quote" id="heroQuote"></p>
+    <div class="cue">SCROLL TO ENTER<i></i></div>
+  </header>
+
+  <h2 class="big">Today’s<br><span>operations</span></h2>
+  <main class="grid">
+    <!-- ===== Schedule ===== -->
+    <section class="card" aria-label="Daily schedule">
+      <div class="nav">
+        <button class="btn sq" id="prev" aria-label="Previous day">&larr;</button>
+        <div class="title"><b id="selDay"></b><small id="selMeta"></small></div>
+        <button class="btn" id="today">Today</button>
+        <input type="date" id="picker" aria-label="Jump to date">
+        <button class="btn sq" id="next" aria-label="Next day">&rarr;</button>
+      </div>
+      <div class="week" id="week"></div>
+      <ol class="tl" id="timeline"></ol>
+    </section>
+
+    <!-- ===== Sidebar ===== -->
+    <aside class="side">
+      <section class="card" aria-label="Progress">
+        <div class="pct"><b><span id="pctNum">0</span><sup>%</sup></b><span id="pctMeta"></span></div>
+        <div class="bar" id="bar"><div id="fill"></div></div>
+        <p class="sub" id="pctMsg" style="margin:12px 0 0"></p>
+      </section>
+
+      <section class="card" aria-label="Journal">
+        <h2>Mission debrief</h2>
+        <p class="sub">What happened today, and what would you do differently?</p>
+        <textarea id="journal" placeholder="Write your field notes here…"></textarea>
+        <div class="jfoot"><span id="wc">0 words</span><span class="saved" id="saved">Saved</span></div>
+      </section>
+
+      <section class="card reset">
+        <p>Clear checked objectives and the debrief for this day.</p>
+        <button class="btn red" id="resetBtn">Reset day</button>
+      </section>
+    </aside>
+  </main>
+  <footer>SPIDER HQ &middot; PROGRESS SAVES ON THIS DEVICE</footer>
+</div>
+
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mt">
+  <div class="box"><h3 id="mt">Reset this day?</h3>
+    <p id="mp">All checked objectives and journal notes for this date will be erased. This can’t be undone.</p>
+    <div class="row"><button class="btn" id="cancel">Cancel</button><button class="btn danger" id="confirm">Reset day</button></div></div>
+</div>
+<div class="toast" id="toast"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+<script>
+/* =========================================================
+   SPIDER HQ — schedule, progress and journal (vanilla JS)
+   ========================================================= */
+
+/* ---------- Schedule data (minutes since midnight) ---------- */
+const H = (h, m = 0) => h * 60 + m;
+const WEEKDAY = [
+  { s:H(6),     t:"Wake up and freshen up",                 d:"Start the mission" },
+  { s:H(6,15),  e:H(7,45),  t:"Study Session 1",           d:"Deep focus" },
+  { s:H(7,45),  e:H(9),     t:"Breakfast, getting ready and commute", d:"Fuel up and move out" },
+  { s:H(9),     e:H(15),    t:"School",                    d:"On the grid" },
+  { s:H(15),    e:H(15,45), t:"Lunch and rest",            d:"Recharge" },
+  { s:H(15,45), e:H(17,15), t:"Study Session 2",           d:"Deep focus" },
+  { s:H(17,15), e:H(18,15), t:"Evening walk",              d:"Patrol the neighbourhood" },
+  { s:H(18,15), e:H(19,15), t:"Workout",                   d:"Train" },
+  { s:H(19,15), e:H(20),    t:"Shower and dinner",         d:"Reset and refuel" },
+  { s:H(20),    e:H(21),    t:"Study Session 3",           d:"Final focus block" },
+  { s:H(21),    e:H(22),    t:"__ALT__",                   d:"" },   /* content creation / personal time */
+  { s:H(22),                t:"Sleep",                     d:"Lights out" }
+];
+const WEEKEND = [
+  { s:H(6),     t:"Wake up",                                d:"Start the mission" },
+  { s:H(6,15),  e:H(8,15), t:"Study Session 1",            d:"Deep focus" },
+  { s:H(8,15),  e:H(9),    t:"Breakfast",                  d:"Fuel up" },
+  { s:H(9),     e:H(11),   t:"Study Session 2",            d:"Deep focus" },
+  { s:H(11),    e:H(12),   t:"Break",                      d:"Step away" },
+  { s:H(12),    e:H(14),   t:"Study Session 3",            d:"Deep focus" },
+  { s:H(14),    e:H(15),   t:"Lunch and rest",             d:"Recharge" },
+  { s:H(15),    e:H(17),   t:"Study Session 4",            d:"Final focus block" },
+  { s:H(17,15), e:H(18,15),t:"Evening walk",               d:"Patrol the neighbourhood" },
+  { s:H(18,15), e:H(19,15),t:"Workout",                    d:"Train" },
+  { s:H(19,15),             t:"Dinner and personal time",  d:"Off duty" }
+];
+const QUOTES = [
+  "With great power comes great responsibility.",
+  "Small, steady swings carry you across the whole city.",
+  "Discipline is the quiet half of every hero.",
+  "Anyone can wear the mask. Show up anyway.",
+  "Fall seven times, web up eight.",
+  "Today’s work is tomorrow’s freedom.",
+  "Stay sharp. The city never stops, and neither does progress."
+];
+const DAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+/* ---------- Helpers ---------- */
+const $ = id => document.getElementById(id);
+const pad = n => String(n).padStart(2, "0");
+const keyOf = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const fromKey = k => { const [y,m,d] = k.split("-").map(Number); return new Date(y, m-1, d); };
+const addDays = (d, n) => { const x = new Date(d); x.setDate(x.getDate()+n); return x; };
+const isWeekend = d => d.getDay() === 0 || d.getDay() === 6;
+const dayNumber = d => Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 864e5);
+const fmtTime = m => { const h = Math.floor(m/60), mm = m%60, ap = h>=12?"PM":"AM"; return `${h%12||12}:${pad(mm)} ${ap}`; };
+
+/* Alternate-day rule: even day numbers = content creation, odd = personal time */
+function scheduleFor(d) {
+  const base = isWeekend(d) ? WEEKEND : WEEKDAY;
+  const content = dayNumber(d) % 2 === 0;
+  return base.map((it, i) => ({
+    ...it, id: "t" + i,
+    t: it.t === "__ALT__" ? (content ? "Content creation" : "Personal time") : it.t,
+    d: it.t === "__ALT__" ? (content ? "Create something worth sharing" : "Off duty, your time") : it.d
+  }));
+}
+
+/* ---------- Storage (guarded: may be unavailable) ---------- */
+const store = {
+  get(d) {
+    try { const r = localStorage.getItem("spiderhq:" + keyOf(d)); if (r) return JSON.parse(r); } catch (e) {}
+    return { done:{}, journal:"" };
+  },
+  set(d, v) { try { localStorage.setItem("spiderhq:" + keyOf(d), JSON.stringify(v)); return true; } catch (e) { return false; } },
+  clear(d) { try { localStorage.removeItem("spiderhq:" + keyOf(d)); } catch (e) {} }
+};
+const pctFor = d => {
+  const s = scheduleFor(d), st = store.get(d);
+  return Math.round(s.filter(i => st.done[i.id]).length / s.length * 100);
+};
+
+/* ---------- State ---------- */
+let sel = new Date(); sel.setHours(0,0,0,0);
+let state = store.get(sel);
+let jTimer;
+
+/* ---------- Toast ---------- */
+function toast(msg) {
+  const t = $("toast"); t.textContent = msg; t.classList.add("on");
+  clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove("on"), 1800);
+}
+
+/* ---------- Hero ---------- */
+function renderHero() {
+  const n = new Date();
+  $("heroDate").textContent = `${DAYS[n.getDay()]}, ${n.getDate()} ${MONTHS[n.getMonth()]} ${n.getFullYear()}`;
+  $("heroQuote").textContent = QUOTES[dayNumber(n) % QUOTES.length];
+}
+/* Draw the web fan (radial threads + curved cross-strands) from the top-right corner */
+function drawWeb() {
+  const cx = 600, cy = 0, g = $("web"), R = 520; let s = "";
+  for (let a = 90; a <= 190; a += 10) {
+    const r = a * Math.PI / 180;
+    s += `<line x1="${cx}" y1="${cy}" x2="${cx + R*Math.cos(r)}" y2="${cy + R*Math.sin(r)}"/>`;
+  }
+  for (let r = 70; r <= R; r += 62) {
+    let pts = [];
+    for (let a = 90; a <= 190; a += 10) {
+      const rr = (a * Math.PI) / 180, k = a < 190 ? r * 0.93 : r;
+      pts.push([cx + k*Math.cos(rr), cy + k*Math.sin(rr)]);
+    }
+    s += `<path d="M${pts[0]} ` + pts.slice(1).map((p,i) => {
+      const q = pts[i], mx = (q[0]+p[0])/2, my = (q[1]+p[1])/2;
+      const dx = cx - mx, dy = cy - my, l = Math.hypot(dx,dy) || 1;
+      return `Q${mx + dx/l*9},${my + dy/l*9} ${p}`;
+    }).join(" ") + `"/>`;
+  }
+  g.innerHTML = s;
+}
+
+/* ---------- Date nav + week strip ---------- */
+function renderNav() {
+  const today = new Date(); today.setHours(0,0,0,0);
+  const diff = Math.round((sel - today) / 864e5);
+  $("selDay").textContent = `${DAYS[sel.getDay()]}, ${sel.getDate()} ${MONTHS[sel.getMonth()]}`;
+  const rel = diff === 0 ? "Today" : diff === 1 ? "Tomorrow" : diff === -1 ? "Yesterday" : diff > 0 ? `In ${diff} days` : `${-diff} days ago`;
+  $("selMeta").textContent = `${rel} · ${isWeekend(sel) ? "Weekend protocol" : "Weekday protocol"}`;
+  $("picker").value = keyOf(sel);
+
+  // Monday-first week containing the selected date
+  const mon = addDays(sel, -((sel.getDay() + 6) % 7));
+  $("week").innerHTML = "";
+  for (let i = 0; i < 7; i++) {
+    const d = addDays(mon, i), b = document.createElement("button");
+    b.className = "wd" + (keyOf(d) === keyOf(sel) ? " sel" : "") + (keyOf(d) === keyOf(today) ? " today" : "");
+    b.setAttribute("aria-label", `${DAYS[d.getDay()]} ${d.getDate()}, ${pctFor(d)}% complete`);
+    b.innerHTML = `<small>${DAYS[d.getDay()].slice(0,3).toUpperCase()}</small><b>${d.getDate()}</b><i><em style="width:${pctFor(d)}%"></em></i>`;
+    b.onclick = () => go(d);
+    $("week").appendChild(b);
+  }
+}
+
+/* ---------- Timeline ---------- */
+const CHECK = '<svg viewBox="0 0 12 12"><path d="M2 6.5l2.6 2.6L10 3.4"/></svg>';
+function renderTimeline() {
+  const list = scheduleFor(sel), tl = $("timeline"), nowD = new Date();
+  const isToday = keyOf(nowD) === keyOf(sel), nm = nowD.getHours()*60 + nowD.getMinutes();
+  tl.innerHTML = "";
+  list.forEach(it => {
+    const done = !!state.done[it.id];
+    const active = isToday && nm >= it.s && (it.e ? nm < it.e : true);
+    const li = document.createElement("li");
+    li.className = "it" + (done ? " done" : "") + (active ? " active" : "");
+    li.innerHTML = `
+      <div class="time">${fmtTime(it.s)}<small>${it.e ? "to " + fmtTime(it.e) : "onwards"}</small></div>
+      <div class="node"></div>
+      <button class="task" role="checkbox" aria-checked="${done}">
+        <span class="chk">${CHECK}</span>
+        <span><span class="t">${it.t}</span><span class="d">${it.d}</span></span>
+        ${active ? '<span class="now">NOW</span>' : ""}
+      </button>`;
+    li.querySelector(".task").onclick = () => toggle(it.id);
+    tl.appendChild(li);
+  });
+}
+function toggle(id) {
+  if (state.done[id]) delete state.done[id]; else state.done[id] = true;
+  persist(); renderTimeline(); renderProgress(); renderNav();
+  if (window.fx) fx.done(scheduleFor(sel).findIndex(i => i.id === id), !!state.done[id]);
+}
+
+/* ---------- Progress ---------- */
+function renderProgress() {
+  const list = scheduleFor(sel), n = list.filter(i => state.done[i.id]).length;
+  const p = Math.round(n / list.length * 100);
+  $("fill").style.width = p + "%";
+  $("bar").classList.toggle("done", p === 100);
+  $("pctMeta").innerHTML = `${n} of ${list.length}<br>objectives complete`;
+  $("pctMsg").textContent = p === 0 ? "Awaiting your first objective." : p < 50 ? "Mission underway." : p < 100 ? "Momentum building. Finish strong." : "Mission complete. Rest well.";
+  // count up smoothly
+  const el = $("pctNum"), from = +el.textContent, t0 = performance.now();
+  cancelAnimationFrame(renderProgress.raf);
+  (function step(t) {
+    const k = Math.min((t - t0) / 600, 1);
+    el.textContent = Math.round(from + (p - from) * k);
+    if (k < 1) renderProgress.raf = requestAnimationFrame(step);
+  })(t0);
+}
+
+/* ---------- Journal ---------- */
+function renderJournal() {
+  $("journal").value = state.journal || "";
+  countWords();
+}
+function countWords() {
+  const w = $("journal").value.trim().split(/\s+/).filter(Boolean).length;
+  $("wc").textContent = `${w} ${w === 1 ? "word" : "words"}`;
+}
+$("journal").addEventListener("input", () => {
+  state.journal = $("journal").value; countWords();
+  clearTimeout(jTimer);
+  jTimer = setTimeout(() => { persist(); flashSaved(); }, 450);   // autosave after typing pauses
+});
+function flashSaved() { const s = $("saved"); s.classList.add("on"); clearTimeout(flashSaved.t); flashSaved.t = setTimeout(() => s.classList.remove("on"), 1400); }
+function persist() {
+  if (!store.set(sel, state)) toast("Storage unavailable in this browser");
+}
+
+/* ---------- Navigation ---------- */
+function go(d) {
+  clearTimeout(jTimer); persist();            // flush any pending journal text first
+  sel = new Date(d); sel.setHours(0,0,0,0);
+  state = store.get(sel);
+  renderAll();
+}
+function renderAll() { renderNav(); renderTimeline(); renderProgress(); renderJournal(); if (window.fx) fx.enter(); }
+$("prev").onclick  = () => go(addDays(sel, -1));
+$("next").onclick  = () => go(addDays(sel, 1));
+$("today").onclick = () => go(new Date());
+$("picker").onchange = e => { if (e.target.value) go(fromKey(e.target.value)); };
+document.addEventListener("keydown", e => {
+  if (/TEXTAREA|INPUT/.test(document.activeElement.tagName)) return;
+  if (e.key === "ArrowLeft") go(addDays(sel, -1));
+  if (e.key === "ArrowRight") go(addDays(sel, 1));
+  if (e.key === "Escape") $("modal").classList.remove("on");
+});
+
+/* ---------- Reset with confirmation ---------- */
+$("resetBtn").onclick = () => { $("mp").textContent = `All checked objectives and journal notes for ${$("selDay").textContent} will be erased. This can’t be undone.`; $("modal").classList.add("on"); $("cancel").focus(); };
+$("cancel").onclick = () => $("modal").classList.remove("on");
+$("modal").onclick = e => { if (e.target === $("modal")) $("modal").classList.remove("on"); };
+$("confirm").onclick = () => {
+  clearTimeout(jTimer); store.clear(sel); state = { done:{}, journal:"" };
+  $("modal").classList.remove("on"); renderAll(); toast("Day reset");
+};
+
+/* ---------- Init ---------- */
+drawWeb(); renderHero(); renderAll();
+// keep the "NOW" marker and hero date current
+setInterval(() => { renderHero(); renderTimeline(); renderNav(); }, 30000);
+</script>
+<script>
+/* =========================================================
+   CINEMATIC LAYER — Three.js scene, GSAP choreography, cursor
+   Runs after the dashboard logic; shares its globals.
+   ========================================================= */
+const RM = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const FINE = matchMedia("(hover:hover) and (pointer:fine)").matches;
+const mouse = { x:0, y:0 }, scrollP = { v:0 };
+let energy = 0;                                  // 0..1.6 — spikes when tasks are completed
+addEventListener("pointermove", e => { mouse.x = e.clientX / innerWidth * 2 - 1; mouse.y = e.clientY / innerHeight * 2 - 1; });
+addEventListener("scroll", () => { scrollP.v = Math.min(scrollY / (innerHeight * 1.2), 1); }, { passive:true });
+
+/* ---------- 3D scene: hanging spider, layered webs, dust ---------- */
+const Scene = (() => {
+  if (!window.THREE) return null;
+  const cv = $("gl"), mob = innerWidth < 700;
+  let R; try { R = new THREE.WebGLRenderer({ canvas:cv, antialias:!mob, alpha:true }); } catch (e) { return null; }
+  R.setPixelRatio(Math.min(devicePixelRatio, mob ? 1.5 : 1.75));
+  R.outputEncoding = THREE.sRGBEncoding; R.toneMapping = THREE.ACESFilmicToneMapping;
+  R.shadowMap.enabled = !mob;
+  const S = new THREE.Scene(); S.fog = new THREE.FogExp2(0x0b0c0f, .045);
+  const cam = new THREE.PerspectiveCamera(42, 1, .1, 100);
+  const intro = { v: RM ? 0 : 7 };               // camera fly-in offset, animated by the intro
+
+  /* Lighting: cold key, crimson rim, steel fill */
+  S.add(new THREE.AmbientLight(0x1a2030, .7));
+  const key = new THREE.DirectionalLight(0x9db9dc, 1.5); key.position.set(4, 6, 6); key.castShadow = true;
+  key.shadow.mapSize.set(mob ? 512 : 1024, mob ? 512 : 1024); Object.assign(key.shadow.camera, { left:-6, right:6, top:6, bottom:-6 });
+  S.add(key);
+  const crim = new THREE.PointLight(0xb0202f, 2.4, 16); crim.position.set(-4, 1, -2); S.add(crim);
+  const fill = new THREE.PointLight(0x7f9cbd, .9, 14); fill.position.set(3, -2, 3); S.add(fill);
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(30, 30), new THREE.ShadowMaterial({ opacity:.4 }));
+  floor.rotation.x = -Math.PI / 2; floor.position.y = -3.4; floor.receiveShadow = true; S.add(floor);
+
+  /* Spider: glossy black thorax/legs, crimson abdomen with hourglass mark */
+  const black = new THREE.MeshPhysicalMaterial({ color:0x0d0f13, metalness:.7, roughness:.28, clearcoat:1, clearcoatRoughness:.2 });
+  const red = new THREE.MeshStandardMaterial({ color:0x7a1722, emissive:0x3a0810, emissiveIntensity:.6, metalness:.4, roughness:.35 });
+  const eyeM = new THREE.MeshBasicMaterial({ color:0xff3b4d });
+  const sp = new THREE.Group(), add = (g, m, x, y, z, s = [1,1,1]) => { const o = new THREE.Mesh(g, m); o.position.set(x, y, z); o.scale.set(...s); o.castShadow = true; sp.add(o); return o; };
+  const ball = new THREE.SphereGeometry(1, 40, 28);
+  add(ball, red, 0, 0, -1.15, [1, .9, 1.25]);
+  add(new THREE.SphereGeometry(.62, 32, 24), black, 0, 0, .1, [1, .8, 1]);
+  add(new THREE.SphereGeometry(.4, 28, 20), black, 0, -.05, .85);
+  [[.14,.06,1.2,.07],[-.14,.06,1.2,.07],[.26,.12,1.12,.045],[-.26,.12,1.12,.045]].forEach(e => add(new THREE.SphereGeometry(e[3], 12, 10), eyeM, e[0], e[1], e[2]));
+  const mark = new THREE.Group(); mark.rotation.x = Math.PI / 2; mark.position.set(0, .94, -1.15);
+  const cone = new THREE.ConeGeometry(.22, .42, 16);
+  const c1 = new THREE.Mesh(cone, black); c1.position.y = -.21;
+  const c2 = new THREE.Mesh(cone, black); c2.position.y = .21; c2.rotation.z = Math.PI;
+  mark.add(c1, c2); sp.add(mark);
+  const legs = [];
+  for (let i = 0; i < 8; i++) {
+    const s = i < 4 ? 1 : -1, k = i % 4, f = 1.5 - k, z0 = .5 - k * .42;
+    const curve = new THREE.CatmullRomCurve3([[s*.5,0,z0],[s*1.4,.9,z0+f*.35],[s*2.5,.5,z0+f*.8],[s*3,-1.1,z0+f*.9]].map(p => new THREE.Vector3(...p)));
+    const pivot = new THREE.Group(), leg = new THREE.Mesh(new THREE.TubeGeometry(curve, 36, .045, 6), black);
+    leg.castShadow = true; pivot.add(leg); sp.add(pivot); legs.push(pivot);
+  }
+  const thread = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0,.3,-2.1), new THREE.Vector3(0,16,-2.1)]),
+    new THREE.LineBasicMaterial({ color:0xc9d3e0, transparent:true, opacity:.55 }));
+  sp.add(thread); S.add(sp);
+
+  /* Webs: funnel-shaped background layer + larger faint foreground layer */
+  function makeWeb(Rd, spokes, rings, color, op, z) {
+    const v = [], P = (a, r) => [Math.cos(a) * r, Math.sin(a) * r, -r * .14];
+    for (let i = 0; i < spokes; i++) v.push(0, 0, 0, ...P(i / spokes * Math.PI * 2, Rd));
+    for (let k = 1; k <= rings; k++) {
+      const r = Rd * Math.pow(k / rings, 1.35);
+      for (let i = 0; i < spokes; i++) {
+        const a0 = i / spokes * Math.PI * 2, a1 = (i + 1) / spokes * Math.PI * 2;
+        const p = P(a0, r), q = P(a1, r), m = P((a0 + a1) / 2, r * .93);   // sagging strand
+        v.push(...p, ...m, ...m, ...q);
+      }
+    }
+    const g = new THREE.BufferGeometry(); g.setAttribute("position", new THREE.Float32BufferAttribute(v, 3));
+    const l = new THREE.LineSegments(g, new THREE.LineBasicMaterial({ color, transparent:true, opacity:op })); l.position.z = z; return l;
+  }
+  const web = makeWeb(16, 18, 10, 0x7f9cbd, .34, -4), web2 = makeWeb(9, 12, 6, 0xb0202f, .12, 2.5);
+  web2.position.x = -3; S.add(web, web2);
+
+  /* Floating dust */
+  const N = mob ? 140 : 320, pos = new Float32Array(N * 3);
+  for (let i = 0; i < N * 3; i += 3) { pos[i] = (Math.random() - .5) * 22; pos[i+1] = (Math.random() - .5) * 14; pos[i+2] = (Math.random() - .5) * 14; }
+  const dg = new THREE.BufferGeometry(); dg.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+  const dust = new THREE.Points(dg, new THREE.PointsMaterial({ color:0x9fb4d0, size:.035, transparent:true, opacity:.5, depthWrite:false }));
+  S.add(dust);
+
+  let base = { x:2.7, y:.1, s:1 };
+  function size() {
+    R.setSize(innerWidth, innerHeight, false); cam.aspect = innerWidth / innerHeight; cam.updateProjectionMatrix();
+    base = innerWidth < 800 ? { x:0, y:1.3, s:.58 } : { x:2.7, y:.1, s:1 };
+    sp.position.x = base.x; sp.scale.setScalar(base.s);
+    if (RM) frame();                              // static render for reduced motion
+  }
+  const clock = new THREE.Clock(); let sm = 0;
+  function frame() {
+    const t = clock.getElapsedTime(); sm += (scrollP.v - sm) * .08; energy *= .95;
+    sp.position.y = base.y + Math.sin(t * .8) * .18 + sm * 3.2;
+    sp.rotation.y = -.55 + mouse.x * .35 + Math.sin(t * .3) * .1; sp.rotation.x = .25 + mouse.y * .15;
+    legs.forEach((l, i) => l.rotation.z = Math.sin(t * 1.7 + i * 1.3) * .035 * (1 + energy * 3));
+    web.rotation.z = t * .015 + sm * 1.1; web2.rotation.z = -t * .01 - sm * .6; web.scale.setScalar(1 + energy * .05);
+    dust.rotation.y = t * .01;
+    cam.position.set(mouse.x * .6, -mouse.y * .35, 9 - sm * 4 + intro.v); cam.lookAt(0, sm * 1.5, 0);
+    crim.intensity = 2.4 + energy * 7; eyeM.color.setRGB(1, .23 + energy * .3, .3 + energy * .3);
+    R.render(S, cam);
+    if (!RM) requestAnimationFrame(frame);
+  }
+  addEventListener("resize", size); size(); if (!RM) frame();
+  return { intro };
+})();
+
+/* ---------- Helpers ---------- */
+function split(el) {                              // wrap each letter for staggered reveals
+  (function walk(n) { [...n.childNodes].forEach(c => {
+    if (c.nodeType === 3) { const f = document.createDocumentFragment();
+      [...c.textContent].forEach(ch => { const s = document.createElement("span"); s.className = "ch"; s.textContent = ch; f.appendChild(s); });
+      c.replaceWith(f); } else walk(c); }); })(el);
+}
+
+/* ---------- Effects used by the dashboard ---------- */
+window.fx = {
+  pulse(a = 1) { energy = Math.min(energy + a, 1.6); },
+  done(i, on) {                                    // task checked / unchecked
+    const li = $("timeline").children[i]; if (!li || !on) return;
+    this.pulse(.5);
+    if (!RM && window.gsap) {
+      const c = li.querySelector(".chk"), b = document.createElement("span"); b.className = "burst"; c.appendChild(b);
+      gsap.fromTo(c, { scale:.6 }, { scale:1, duration:.7, ease:"elastic.out(1.2,.4)" });
+      gsap.to(b, { scale:2.8, opacity:0, duration:.7, ease:"power2.out", onComplete:() => b.remove() });
+    }
+    if (pctFor(sel) === 100) { this.pulse(1.4); toast("Mission complete"); }
+  },
+  enter() {                                        // when switching dates
+    if (RM || !window.gsap) return;
+    gsap.from("#timeline .it", { opacity:0, x:-18, duration:.5, stagger:.04, ease:"power3.out", clearProps:"transform,opacity" });
+  }
+};
+
+/* ---------- Scroll reveals + hero parallax (after intro) ---------- */
+function reveals() {
+  if (!window.ScrollTrigger) return;
+  gsap.set(".card,.big", { opacity:0, y:50 });
+  ScrollTrigger.batch(".card,.big", { start:"top 92%", once:true,
+    onEnter: b => gsap.to(b, { opacity:1, y:0, duration:1, stagger:.12, ease:"power3.out", clearProps:"transform" }) });
+  const trig = { trigger:".hero", scrub:true };
+  gsap.to(".hero h1", { yPercent:-25, ease:"none", scrollTrigger:{ ...trig, start:"top top", end:"bottom top" } });
+  gsap.to(".hero .status,.hero-meta,.hero-quote,.cue", { y:-60, opacity:0, ease:"none", scrollTrigger:{ ...trig, start:"20% top", end:"bottom 30%" } });
+}
+
+/* ---------- Intro sequence ---------- */
+(function intro() {
+  const loader = $("loader"), end = () => loader && loader.remove();
+  if (RM || !window.gsap) return end();
+  try {
+    gsap.registerPlugin(window.ScrollTrigger);
+    const h1 = document.querySelector("h1"); h1.setAttribute("aria-label", "Spider HQ"); split(h1);
+    const o = { v:0 }, num = loader.querySelector(".n"), rest = ".hero .status,.hero-date,.hero-quote,.cue";
+    gsap.set(rest, { opacity:0, y:24 });
+    const tl = gsap.timeline({ defaults:{ ease:"power3.out" }, onComplete:reveals });
+    tl.to(o, { v:100, duration:1.5, ease:"power2.inOut", onUpdate:() => num.textContent = pad(Math.round(o.v)) }, 0)
+      .to(loader.querySelector(".l i"), { scaleX:1, duration:1.5, ease:"power2.inOut" }, 0)
+      .to(loader, { yPercent:-100, duration:1.1, ease:"expo.inOut" }, 1.75)
+      .add(end, 2.9)
+      .from(".ch", { yPercent:60, opacity:0, rotateX:-60, transformOrigin:"50% 100%", stagger:.05, duration:1.1, ease:"expo.out" }, 2.1)
+      .to(rest, { opacity:1, y:0, stagger:.12, duration:1 }, 2.4);
+    if (Scene) tl.to(Scene.intro, { v:0, duration:2.8, ease:"power3.out" }, 1.75);   // fly into HQ
+  } catch (e) { end(); }
+})();
+
+/* ---------- Custom cursor + magnetic hover (desktop only) ---------- */
+if (FINE && !RM && window.gsap) {
+  document.body.classList.add("cursor");
+  const dx = gsap.quickTo("#cd", "x", { duration:.08 }), dy = gsap.quickTo("#cd", "y", { duration:.08 });
+  const rx = gsap.quickTo("#cr", "x", { duration:.35 }), ry = gsap.quickTo("#cr", "y", { duration:.35 });
+  let cur = null;
+  document.addEventListener("mousemove", e => {
+    dx(e.clientX); dy(e.clientY); rx(e.clientX); ry(e.clientY);
+    const hit = e.target.closest("button,input,textarea,.task");
+    $("cr").classList.toggle("hov", !!hit);
+    const m = e.target.closest(".btn,.wd");
+    if (m !== cur) { if (cur) gsap.to(cur, { x:0, y:0, duration:.6, ease:"elastic.out(1,.4)" }); cur = m; }
+    if (m) { const r = m.getBoundingClientRect();
+      gsap.to(m, { x:(e.clientX - r.left - r.width / 2) * .25, y:(e.clientY - r.top - r.height / 2) * .25, duration:.4 }); }
+  });
+}
+</script>
+</body>
+</html>
